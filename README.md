@@ -1,4 +1,4 @@
-# SenAnnonces.sn — Moderation Service (Node.js)
+# SenAnnonces.sn - Moderation Service (Node.js)
 
 Service de modération des annonces pour la plateforme **SenAnnonces.sn**, développé avec **Express.js**.
 
