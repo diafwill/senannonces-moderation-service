@@ -1,4 +1,4 @@
-#  SenAnnonces.sn — Moderation Service (Node.js)
+#  SenAnnonces.sn - Moderation Service (Node.js)
 
 Service de modération des annonces pour la plateforme **SenAnnonces.sn**, développé avec **Express.js**.
 
@@ -78,7 +78,7 @@ Authorization: Bearer <votre_token>
 
 ---
 
-## 🗺️ Endpoints API
+##  Endpoints API
 
 ### Auth
 ```
@@ -151,7 +151,7 @@ curl -X PATCH http://localhost:3001/moderations/$ID/approve \
 
 ---
 
-## 🔍 Filtres disponibles
+##  Filtres disponibles
 
 ```bash
 # Filtrer par ville
