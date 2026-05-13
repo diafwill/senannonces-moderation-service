@@ -8,21 +8,38 @@ const options = {
       title: 'SenAnnonces - Moderation Service API',
       version: '1.0.0',
       description: `
-## Service de modération des annonces - SenAnnonces.sn
+## Service de modération — SenAnnonces (Architecture Microservices)
 
-Ce service gère :
-- **Authentification JWT** (inscription, connexion)
-- **Gestion des annonces** (CRUD + filtres)
-- **Modération** (approbation / rejet)
-- **Workflow complet** : EN_ATTENTE -> APPROUVEE -> PUBLIEE / REJETEE
+Ce service est responsable **uniquement des décisions de modération**.
+Les annonces sont stockées et gérées par **annonce-service** (port 8081).
 
-### Statuts des annonces
-| Statut | Description |
-|--------|-------------|
-| \`EN_ATTENTE\` | Annonce créée, en attente de modération |
-| \`APPROUVEE\` | Validée par un modérateur |
-| \`PUBLIEE\` | Visible publiquement |
-| \`REJETEE\` | Refusée par un modérateur |
+### Architecture
+\`\`\`
+annonce-service (port 8081)  ←──────────────────────────────────┐
+   POST /annonces/{id}/soumettre                                  │ callback
+          │                                                       │
+          ▼                                                        │
+moderation-service (port 3001)                                    │
+   POST /moderations/submit  (reçoit l'annonce)                   │
+   PATCH /moderations/{id}/approve → PATCH /annonces/{id}/statut ─┘
+   PATCH /moderations/{id}/reject  → PATCH /annonces/{id}/statut ─┘
+\`\`\`
+
+### Workflow complet de démonstration
+
+**Scénario Approbation :**
+1. \`POST http://localhost:8081/annonces\` → crée l'annonce (statut: EN_ATTENTE)
+2. \`POST http://localhost:8081/annonces/{id}/soumettre\` → envoie à moderation-service
+3. \`POST http://localhost:3001/auth/login\` → obtenir un JWT (MODERATEUR ou ADMIN)
+4. \`PATCH http://localhost:3001/moderations/{id}/approve\` → approuve + callback → statut: PUBLIEE
+5. \`GET http://localhost:8081/annonces/{id}\` → vérifier statut PUBLIEE ✅
+
+**Scénario Rejet :**
+1. \`POST http://localhost:8081/annonces\` → crée l'annonce
+2. \`POST http://localhost:8081/annonces/{id}/soumettre\` → envoie à moderation-service
+3. \`POST http://localhost:3001/auth/login\` → obtenir un JWT
+4. \`PATCH http://localhost:3001/moderations/{id}/reject\` → rejette + callback → statut: REJETEE
+5. \`GET http://localhost:8081/annonces/{id}\` → vérifier statut REJETEE ❌
 
 ### Comptes de test disponibles
 | Email | Mot de passe | Rôle |
@@ -30,6 +47,13 @@ Ce service gère :
 | admin@senannonces.sn | admin123 | ADMIN |
 | moderateur@senannonces.sn | modo123 | MODERATEUR |
 | user@senannonces.sn | user123 | USER |
+
+### Statuts des annonces (stockés dans annonce-service)
+| Statut | Description |
+|--------|-------------|
+| \`EN_ATTENTE\` | Créée, en attente de modération |
+| \`PUBLIEE\` | Approuvée par un modérateur (état terminal) |
+| \`REJETEE\` | Rejetée par un modérateur (état terminal) |
       `,
       contact: {
         name: 'SenAnnonces Support',

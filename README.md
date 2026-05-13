@@ -8,32 +8,19 @@ Service de modération des annonces pour la plateforme **SenAnnonces.sn**, déve
 
 ```
 senannonces/
-├── moderation-service/        # Service principal (Node.js/Express)
+├── moderation-service/        
 │   ├── src/
-│   │   ├── app.js             # Application Express
-│   │   ├── server.js          # Point d'entrée
-│   │   ├── config/
-│   │   │   └── swagger.js     # Configuration Swagger/OpenAPI
-│   │   ├── middlewares/
-│   │   │   ├── auth.middleware.js        # JWT + contrôle des rôles
-│   │   │   └── validation.middleware.js  # Gestion des erreurs de validation
-│   │   ├── models/
-│   │   │   └── database.js    # Base de données en mémoire
-│   │   ├── routes/
-│   │   │   ├── auth.routes.js        # Auth (login, register, me)
-│   │   │   ├── annonces.routes.js    # CRUD + filtres annonces
-│   │   │   ├── moderation.routes.js  # Approve / Reject
-│   │   │   └── health.routes.js      # Health check
-│   │   └── validators/
-│   │       ├── annonce.validator.js  # Validation des annonces
-│   │       └── auth.validator.js     # Validation de l'auth
-│   ├── tests/
-│   │   └── api.test.js        # Tests Jest complets (35+ tests)
-│   ├── .env
-│   ├── jest.config.json
+│   │   ├── app.js                    # Configuration application Express
+│   │   ├── server.js                 # Point d'entrée
+│   │   ├── config/swagger.js         # Configuration OpenAPI
+│   │   ├── middlewares/              # Intercepteurs (Auth, RBAC, Rate Limit)
+│   │   ├── models/                   # Mécanisme de base de données
+│   │   ├── routes/                   # Définition des endpoints REST
+│   │   └── validators/               # Schémas de validation entrées
+│   ├── tests/                        # Suite de tests d'intégration (Jest)
+│   ├── .env                          # Variables d'environnement locales
 │   └── package.json
-│
-└── api-gateway/               # API Gateway simple
+└── api-gateway/                      # Reverse proxy (Port 3000)
     ├── gateway.js
     └── package.json
 ```
@@ -49,30 +36,14 @@ senannonces/
 ### 1. Installer les dépendances
 
 ```bash
-# Moderation Service
+# Lancer le service de modération
 cd moderation-service
 npm install
-
-# API Gateway
-cd ../api-gateway
-npm install
-```
-
-### 2. Lancer le service
-
-```bash
-# Mode développement (avec rechargement automatique)
-cd moderation-service
 npm run dev
 
-# Mode production
-npm start
-```
-
-### 3. Lancer l'API Gateway (optionnel)
-
-```bash
-cd api-gateway
+# Lancer la gateway (optionnel, dans un autre terminal)
+cd ../api-gateway
+npm install
 npm run dev
 ```
 
@@ -107,7 +78,7 @@ Authorization: Bearer <votre_token>
 
 ---
 
-##  Endpoints API
+## 🗺️ Endpoints API
 
 ### Auth
 ```
@@ -157,46 +128,25 @@ Créer annonce
 ### Scénario 1 — Approbation complète
 
 ```bash
-# 1. Connexion utilisateur
+# 1. Obtenir un token utilisateur
 curl -X POST http://localhost:3001/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"user@senannonces.sn","password":"user123"}'
 
-# 2. Créer une annonce (remplacer TOKEN)
+# 2. Créer l'annonce (remplacer $TOKEN)
 curl -X POST http://localhost:3001/annonces \
-  -H "Authorization: Bearer TOKEN" \
+  -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{
-    "titre": "Voiture Toyota à vendre",
-    "description": "Très bon état, 80 000 km, climatisée.",
-    "prix": 4500000,
-    "ville": "Dakar",
-    "categorie": "Véhicules"
-  }'
+  -d '{"titre":"Voiture Toyota", "prix":4500000, "ville":"Dakar", "categorie":"Véhicules"}'
 
-# 3. Connexion modérateur
+# 3. Obtenir un token modérateur
 curl -X POST http://localhost:3001/auth/login \
+  -H "Content-Type: application/json" \
   -d '{"email":"moderateur@senannonces.sn","password":"modo123"}'
 
-# 4. Approuver l'annonce (remplacer ID et MODO_TOKEN)
-curl -X PATCH http://localhost:3001/moderations/ID/approve \
-  -H "Authorization: Bearer MODO_TOKEN"
-
-# 5. Vérifier le statut → doit être PUBLIEE
-curl http://localhost:3001/moderations/ID/status
-```
-
-### Scénario 2 — Rejet
-
-```bash
-# Rejeter avec motif
-curl -X PATCH http://localhost:3001/moderations/ID/reject \
-  -H "Authorization: Bearer MODO_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"motif": "Description insuffisante."}'
-
-# Vérifier → doit être REJETEE
-curl http://localhost:3001/moderations/ID/status
+# 4. Approuver (remplacer $ID et $MODO_TOKEN)
+curl -X PATCH http://localhost:3001/moderations/$ID/approve \
+  -H "Authorization: Bearer $MODO_TOKEN"
 ```
 
 ---
@@ -225,64 +175,3 @@ GET /annonces?ville=Dakar&categorie=Immobilier&page=1&limit=5
 cd moderation-service
 npm test
 ```
-
-Les tests couvrent :
-- ✅ Health check
-- ✅ Auth (login, register, token invalide, rôles)
-- ✅ CRUD annonces (création, validation, filtres)
-- ✅ Scénario 1 : approbation → statut PUBLIEE
-- ✅ Scénario 2 : rejet → statut REJETEE
-- ✅ Contrôle d'accès par rôle
-
----
-
-##  Communication avec Spring Boot (annonce-service)
-
-Le service est conçu pour recevoir des appels HTTP de l'`annonce-service` Java :
-
-```
-annonce-service (Spring Boot :8080)
-         │
-         │  POST /soumettre → appel HTTP
-         ▼
-moderation-service (Node.js :3001)
-         │
-         │  PATCH /moderations/:id/approve ou /reject
-         ▼
-    Statut mis à jour
-```
-
-Via l'API Gateway :
-```
-Client → http://localhost:3000/moderation/... → moderation-service
-Client → http://localhost:3000/annonces-service/... → annonce-service
-```
-
----
-
-##  Variables d'environnement (.env)
-
-```env
-PORT=3001
-NODE_ENV=development
-JWT_SECRET=senannonces_super_secret_jwt_key_2024
-JWT_EXPIRES_IN=24h
-ANNONCE_SERVICE_URL=http://localhost:8080
-GATEWAY_PORT=3000
-```
-
----
-
-##  Fonctionnalités bonus implémentées
-
-| Bonus | Statut |
-|-------|--------|
-| Filtrer annonces par ville | ✅ |
-| Ajouter catégorie | ✅ |
-| Validation des données | ✅ (express-validator) |
-| API Gateway simple | ✅ |
-| Authentification JWT | ✅ |
-| Contrôle des rôles (USER/MODERATEUR/ADMIN) | ✅ |
-| Rate limiting | ✅ |
-| Historique de modération | ✅ |
-| Pagination | ✅ |

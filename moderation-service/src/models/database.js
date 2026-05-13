@@ -96,6 +96,10 @@ const annonces = [
 // ─── Historique de modération ────────────────────────────────────────────────
 const moderations = [];
 
+// ─── File des annonces soumises à modération (source: annonce-service) ───────
+// Each entry: { annonceId, titre, description, prix, ville, submittedAt }
+const pendingSubmissions = [];
+
 // ─── Compteur auto-incrémenté ────────────────────────────────────────────────
 let nextId = 4;
 
@@ -103,6 +107,7 @@ module.exports = {
   users,
   annonces,
   moderations,
+  pendingSubmissions,
   STATUTS,
   CATEGORIES,
   getNextId: () => nextId++,
