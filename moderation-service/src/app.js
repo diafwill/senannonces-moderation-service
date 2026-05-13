@@ -48,7 +48,7 @@ app.use('/moderations', moderationRoutes);
 // ─── Route racine ─────────────────────────────────────────────────────────────
 app.get('/', (req, res) => {
   res.json({
-    service: '📢 SenAnnonces - Moderation Service',
+    service: ' SenAnnonces - Moderation Service',
     version: '1.0.0',
     documentation: `http://localhost:${process.env.PORT || 3001}/api-docs`,
     endpoints: {

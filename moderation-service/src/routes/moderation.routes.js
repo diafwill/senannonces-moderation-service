@@ -152,7 +152,7 @@ router.patch(
       message: `Annonce #${annonceId} approuvée et publiée avec succès.`,
       data: annonce,
       moderation: historique,
-      workflow: 'EN_ATTENTE → APPROUVEE → PUBLIEE ✅',
+      workflow: 'EN_ATTENTE → APPROUVEE → PUBLIEE',
     });
   }
 );

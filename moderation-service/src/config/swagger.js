@@ -11,10 +11,10 @@ const options = {
 ## Service de modération des annonces - SenAnnonces.sn
 
 Ce service gère :
-- 🔐 **Authentification JWT** (inscription, connexion)
-- 📋 **Gestion des annonces** (CRUD + filtres)
-- ✅ **Modération** (approbation / rejet)
-- 🔄 **Workflow complet** : EN_ATTENTE -> APPROUVEE -> PUBLIEE / REJETEE
+- **Authentification JWT** (inscription, connexion)
+- **Gestion des annonces** (CRUD + filtres)
+- **Modération** (approbation / rejet)
+- **Workflow complet** : EN_ATTENTE -> APPROUVEE -> PUBLIEE / REJETEE
 
 ### Statuts des annonces
 | Statut | Description |
@@ -133,10 +133,10 @@ Ce service gère :
       },
     },
     tags: [
-      { name: 'Auth', description: '🔐 Authentification et gestion des comptes' },
-      { name: 'Annonces', description: '📋 Gestion des annonces (CRUD + filtres)' },
-      { name: 'Moderation', description: '⚖️ Approbation et rejet des annonces' },
-      { name: 'Health', description: '🏥 Vérification de l\'état du service' },
+      { name: 'Auth', description: 'Authentification et gestion des comptes' },
+      { name: 'Annonces', description: 'Gestion des annonces (CRUD + filtres)' },
+      { name: 'Moderation', description: 'Approbation et rejet des annonces' },
+      { name: 'Health', description: 'Vérification de l\'état du service' },
     ],
   },
   apis: ['./src/routes/*.js'],

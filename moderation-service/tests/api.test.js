@@ -7,7 +7,7 @@ let tokenModo = '';
 let annonceId = null;
 
 // ─────────────────────────────────────────────────────────────────────────────
-describe('🏥 Health Check', () => {
+describe('Health Check', () => {
   test('GET /health → service UP', async () => {
     const res = await request(app).get('/health');
     expect(res.statusCode).toBe(200);
@@ -17,7 +17,7 @@ describe('🏥 Health Check', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-describe('🔐 Auth - Connexion', () => {
+describe('Auth - Connexion', () => {
   test('POST /auth/login → succès avec identifiants valides (USER)', async () => {
     const res = await request(app).post('/auth/login').send({
       email: 'user@senannonces.sn',
@@ -76,7 +76,7 @@ describe('🔐 Auth - Connexion', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-describe('📋 Annonces - CRUD', () => {
+describe('Annonces - CRUD', () => {
   test('GET /annonces → liste publique', async () => {
     const res = await request(app).get('/annonces');
     expect(res.statusCode).toBe(200);
@@ -153,7 +153,7 @@ describe('📋 Annonces - CRUD', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-describe('⚖️ Modération - Workflow complet', () => {
+describe('Modération - Workflow complet', () => {
   test('GET /moderations/pending → 401 sans token', async () => {
     const res = await request(app).get('/moderations/pending');
     expect(res.statusCode).toBe(401);
@@ -199,7 +199,7 @@ describe('⚖️ Modération - Workflow complet', () => {
   });
 
   // ─── Scénario 2 : Rejet ─────────────────────────────────────────────────
-  test('SCÉNARIO 2 - Créer une annonce puis la rejeter → statut REJETEE ❌', async () => {
+  test('SCÉNARIO 2 - Créer une annonce puis la rejeter → statut REJETEE', async () => {
     // Créer une nouvelle annonce
     const create = await request(app)
       .post('/annonces')
@@ -239,7 +239,7 @@ describe('⚖️ Modération - Workflow complet', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-describe('🗂️ Catégories', () => {
+describe('Catégories', () => {
   test('GET /annonces/meta/categories → liste des catégories', async () => {
     const res = await request(app).get('/annonces/meta/categories');
     expect(res.statusCode).toBe(200);

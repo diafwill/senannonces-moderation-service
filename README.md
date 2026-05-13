@@ -1,10 +1,10 @@
-# 📢 SenAnnonces.sn — Moderation Service (Node.js)
+#  SenAnnonces.sn — Moderation Service (Node.js)
 
 Service de modération des annonces pour la plateforme **SenAnnonces.sn**, développé avec **Express.js**.
 
 ---
 
-## 📁 Structure du projet
+##  Structure du projet
 
 ```
 senannonces/
@@ -40,7 +40,7 @@ senannonces/
 
 ---
 
-## 🚀 Installation & Lancement
+##  Installation & Lancement
 
 ### Prérequis
 - Node.js >= 18
@@ -78,18 +78,18 @@ npm run dev
 
 ---
 
-## 📖 URLs importantes
+##  URLs importantes
 
 | URL | Description |
 |-----|-------------|
-| `http://localhost:3001/api-docs` | ✅ **Swagger UI** (documentation interactive) |
-| `http://localhost:3001/health` | ❤️ Health check + statistiques |
-| `http://localhost:3001/` | 📋 Liste des endpoints |
-| `http://localhost:3000/` | 🔀 API Gateway |
+| `http://localhost:3001/api-docs` |  **Swagger UI** (documentation interactive) |
+| `http://localhost:3001/health` |  Health check + statistiques |
+| `http://localhost:3001/` |  Liste des endpoints |
+| `http://localhost:3000/` |  API Gateway |
 
 ---
 
-## 🔐 Authentification JWT
+##  Authentification JWT
 
 Tous les endpoints protégés nécessitent un token JWT dans le header :
 
@@ -107,7 +107,7 @@ Authorization: Bearer <votre_token>
 
 ---
 
-## 🗺️ Endpoints API
+##  Endpoints API
 
 ### Auth
 ```
@@ -137,7 +137,7 @@ GET    /moderations/:annonceId/status    # Vérifier le statut + historique
 
 ---
 
-## 🔄 Workflow des statuts
+##  Workflow des statuts
 
 ```
 Créer annonce
@@ -145,14 +145,14 @@ Créer annonce
      ▼
 [EN_ATTENTE]
      │
-     ├── Moderateur APPROVE ──────► [APPROUVEE] ──► [PUBLIEE] ✅
+     ├── Moderateur APPROVE ──────► [APPROUVEE] ──► [PUBLIEE] 
      │
-     └── Moderateur REJECT ───────► [REJETEE] ❌ (définitif)
+     └── Moderateur REJECT ───────► [REJETEE]  (définitif)
 ```
 
 ---
 
-## 🎯 Scénarios de démonstration
+##  Scénarios de démonstration
 
 ### Scénario 1 — Approbation complète
 
@@ -219,7 +219,7 @@ GET /annonces?ville=Dakar&categorie=Immobilier&page=1&limit=5
 
 ---
 
-## 🧪 Lancer les tests
+##  Lancer les tests
 
 ```bash
 cd moderation-service
@@ -236,7 +236,7 @@ Les tests couvrent :
 
 ---
 
-## 🔗 Communication avec Spring Boot (annonce-service)
+##  Communication avec Spring Boot (annonce-service)
 
 Le service est conçu pour recevoir des appels HTTP de l'`annonce-service` Java :
 
@@ -260,7 +260,7 @@ Client → http://localhost:3000/annonces-service/... → annonce-service
 
 ---
 
-## 📦 Variables d'environnement (.env)
+##  Variables d'environnement (.env)
 
 ```env
 PORT=3001
@@ -273,7 +273,7 @@ GATEWAY_PORT=3000
 
 ---
 
-## ✨ Fonctionnalités bonus implémentées
+##  Fonctionnalités bonus implémentées
 
 | Bonus | Statut |
 |-------|--------|
